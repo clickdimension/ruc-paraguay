@@ -1,0 +1,34 @@
+DROP FUNCTION IF EXISTS `f_digit11`;;
+CREATE FUNCTION `f_digit11`(`in_numero` varchar(11)) RETURNS int(11) unsigned
+begin
+
+/*
+https://medium.com/@blog.ocampoge/digito-verificador-escrito-en-plpgsql-paraguay-c112e4ebb2b9
+*/
+
+DECLARE basemax integer(11) default 11;
+DECLARE suma integer(11) default 0;
+DECLARE ktemp integer(11) default 2;
+DECLARE pos integer(11);
+DECLARE resto integer(11);
+
+set pos = length(in_numero);
+while pos > 0 do
+   set suma = suma + SUBSTR(in_numero, pos, 1) * ktemp;
+   set ktemp = ktemp + 1;
+   IF  ktemp > basemax THEN 
+	set ktemp = 2;
+    END  IF;
+    set pos=pos-1;
+end while;
+
+set resto = mod(suma, basemax);
+  IF  resto > 1 THEN 
+	return basemax - resto;
+    END  IF;
+ 
+return 0;
+
+/* return numero; */
+
+end;;
